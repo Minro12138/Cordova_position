@@ -10,24 +10,25 @@ function onDeviceReady() {
     });
     console.log(watchMapPosition());
     console.log("实时监控");
-    $("#re").on("click",watchMapPosition);
+    $("#re").on("click", watchMapPosition);
 }
 
-function getMap(latitude, longitude) {
+function getMap(data) {
     console.log("getMap!");
-    document.getElementById("show").innerHTML = "纬度为：" + longitude + "，经度为：" + latitude ;
+    console.log(""+JSON.stringify(data));
+    document.getElementById("show").innerHTML = "纬度为：" + longitude + "，经度为：" + latitude;
     var map = new BMap.Map("container");
     // 创建地图实例  
-    var point = new BMap.Point(longitude,latitude);
+    // var point = new BMap.Point(longitude, latitude);
     // var point = new BMap.Point(113.485457,23.107344);
     // 创建点坐标  
     console.log(latitude);
     console.log(longitude);
-    map.centerAndZoom(point, 17);
+    map.centerAndZoom(data.points[0], 18);
     // 初始化地图，设置中心点坐标和地图级别
 
-    var marker = new BMap.Marker(point);  // 创建标注
-	map.addOverlay(marker);               // 将标注添加到地图中
+    var marker = new BMap.Marker(data.points[0]); // 创建标注
+    map.addOverlay(marker); // 将标注添加到地图中
 
     var overlay = [
         new BMap.Point(113.485353, 23.107497),
@@ -48,7 +49,7 @@ function getMap(latitude, longitude) {
 
     document.getElementById("decidepoint").onclick = function () {
         console.log("判断是否在指定范围中");
-        var result = BMapLib.GeoUtils.isPointInPolygon(point, polygon);
+        var result = BMapLib.GeoUtils.isPointInPolygon(data.points[0], polygon);
         // if (point.lng<=113.485353&&point.lng>=113.48534&&point.lat<=23.107497&&point.lat>=23.106704) {
         if (result == true) {
             alert("你在指定范围！");
@@ -68,8 +69,7 @@ function watchMapPosition() {
         enableHighAccuracy: true,
     };
     console.log("监控函数执行");
-    return navigator.geolocation.watchPosition
-    (onMapWatchSuccess, onMapError, options);
+    return navigator.geolocation.watchPosition(onMapWatchSuccess, onMapError, options);
 }
 
 //获取位置成功
@@ -80,7 +80,8 @@ function onMapSuccess(position) {
     console.log(latitude);
     console.log(longitude);
     // alert("已刷新位置");
-    getMap(latitude, longitude);
+    // getMap(latitude, longitude);
+    translatePoint(longitude,latitude);
 }
 
 //实时监控位置成功
@@ -96,8 +97,18 @@ var onMapWatchSuccess = function (position) {
         latitude = updatedLatitude;
         longitude = updatedLongitude;
 
-        getMap(updatedLatitude, updatedLongitude);
+        // getMap(updatedLatitude, updatedLongitude);
+        translatePoint(updatedLongitude,updatedLatitude);
     }
+}
+
+//转换坐标
+function translatePoint(lon, lat) {
+    var convertor = new BMap.Convertor();
+    var pointArr = [];
+    var ggPoint = new BMap.Point(lon,lat);
+    pointArr.push(ggPoint);
+    convertor.translate(pointArr, 1, 5, getMap);
 }
 
 function onMapError(error) {
