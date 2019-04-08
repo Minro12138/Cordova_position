@@ -9,5 +9,10 @@ body {
 }
 
 #container {
-    height: 50%
+    width: 98%;
+    height: 300px;
+    border-style: inset;
+    border-width: 3px;
+    margin: auto;
+    text-align: center;
 }
