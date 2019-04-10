@@ -19,9 +19,6 @@ function getMap(data) {
     document.getElementById("show").innerHTML = "纬度为：" + longitude + "，经度为：" + latitude;
     var map = new BMap.Map("container");
     // 创建地图实例  
-    // var point = new BMap.Point(longitude, latitude);
-    // var point = new BMap.Point(113.485457,23.107344);
-    // 创建点坐标  
     console.log(latitude);
     console.log(longitude);
     map.centerAndZoom(data.points[0], 18);
@@ -50,11 +47,12 @@ function getMap(data) {
     document.getElementById("decidepoint").onclick = function () {
         console.log("判断是否在指定范围中");
         var result = BMapLib.GeoUtils.isPointInPolygon(data.points[0], polygon);
-        // if (point.lng<=113.485353&&point.lng>=113.48534&&point.lat<=23.107497&&point.lat>=23.106704) {
         if (result == true) {
-            alert("你在指定范围！");
+            alert("你在指定范围！成功签到！");
+            $("#footer").text("签到成功！");
         } else {
-            alert("你不在指定范围中！");
+            alert("请在指定范围中签到！");
+            $("#footer").text("你不在指定区域签到，请检查当前位置！");
         }
     };
 
@@ -79,8 +77,6 @@ function onMapSuccess(position) {
     longitude = position.coords.longitude;
     console.log(latitude);
     console.log(longitude);
-    // alert("已刷新位置");
-    // getMap(latitude, longitude);
     translatePoint(longitude,latitude);
 }
 
@@ -97,7 +93,6 @@ var onMapWatchSuccess = function (position) {
         latitude = updatedLatitude;
         longitude = updatedLongitude;
 
-        // getMap(updatedLatitude, updatedLongitude);
         translatePoint(updatedLongitude,updatedLatitude);
     }
 }
@@ -119,13 +114,3 @@ function onMapError(error) {
 function onError() {
     alert("获取位置失败！");
 }
-
-// function decidePoint(point) {
-//     console.log("判断" + point + "是否在指定范围中");
-//     var result = BMapLib.GeoUtils.isPointInPolygon(point, polygon);
-//     if (result) {
-//         alert("你不在指定范围！");
-//     } else {
-//         alert("你在指定范围中！");
-//     }
-// }
